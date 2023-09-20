@@ -4,6 +4,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
+import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
+import 'package:flutter_bluetooth_serial_example/connection_singleton.dart';
+import 'package:flutter_bluetooth_serial_example/display_value.dart';
+import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   final BluetoothDevice server;
@@ -37,6 +41,9 @@ class _ChatPage extends State<ChatPage> {
 
   bool isDisconnecting = false;
 
+  //// === /////
+  late BluetoothProvider provider;
+
   @override
   void initState() {
     super.initState();
@@ -44,6 +51,7 @@ class _ChatPage extends State<ChatPage> {
     BluetoothConnection.toAddress(widget.server.address).then((_connection) {
       print('Connected to the device');
       connection = _connection;
+
       setState(() {
         isConnecting = false;
         isDisconnecting = false;
@@ -85,6 +93,9 @@ class _ChatPage extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
+    provider = Provider.of<BluetoothProvider>(context);
+    //HoldValues.connection = connection;
+    provider.connection = connection;
     final List<Row> list = messages.map((_message) {
       return Row(
         children: <Widget>[
@@ -155,6 +166,13 @@ class _ChatPage extends State<ChatPage> {
                           : null),
                 ),
               ],
+            ),
+            MaterialButton(
+              onPressed: () => Navigator.push(context,
+                  MaterialPageRoute(builder: (context) => DisplayValue())),
+              color: Colors.blue,
+              textColor: Colors.white,
+              child: Text('i hope it work'),
             )
           ],
         ),
@@ -202,6 +220,7 @@ class _ChatPage extends State<ChatPage> {
           ),
         );
         _messageBuffer = dataString.substring(index);
+        provider.setValue(messages.last.text.trim());
       });
     } else {
       _messageBuffer = (backspacesCounter > 0
