@@ -8,14 +8,28 @@ class BluetoothProvider with ChangeNotifier {
   final clientID = 0;
   // BluetoothConnection? connection;
 
-  String _m = '';
-
-  setValue(String m) {
-    _m = m;
+  bool _lostConnection = false;
+  bool get lostConnection => _lostConnection;
+  set lostConnection(bool value) {
+    _lostConnection = value;
     notifyListeners();
   }
 
-  String getValue() {
-    return _m;
+  bool _connected = false;
+  bool get connected => _connected;
+  set connected(bool value) {
+    _connected = value;
+    notifyListeners();
+  }
+
+  String _messageReceived = '';
+
+  setMessageReceived(String m) {
+    _messageReceived = m;
+    notifyListeners();
+  }
+
+  String getMessageReceived() {
+    return _messageReceived;
   }
 }

@@ -35,7 +35,11 @@ class DisplayValue extends StatelessWidget {
               color: Colors.blue,
               child: Text('off'),
             ),
-            Text('${provider.getValue()}')
+            Text('${provider.getMessageReceived()}'),
+            SizedBox(
+              height: 20,
+            ),
+            provider.lostConnection ? Text('Lost connection') : SizedBox()
           ],
         ),
       ),

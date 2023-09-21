@@ -7,12 +7,13 @@ import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
 import 'package:flutter_bluetooth_serial_example/connection_singleton.dart';
 import 'package:flutter_bluetooth_serial_example/display_value.dart';
+import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
-  final BluetoothDevice server;
+  //final BluetoothDevice server;
 
-  const ChatPage({required this.server});
+  const ChatPage();
 
   @override
   _ChatPage createState() => new _ChatPage();
@@ -26,6 +27,7 @@ class _Message {
 }
 
 class _ChatPage extends State<ChatPage> {
+  late BluetoothDevice server;
   static final clientID = 0;
   BluetoothConnection? connection;
 
@@ -47,8 +49,8 @@ class _ChatPage extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-
-    BluetoothConnection.toAddress(widget.server.address).then((_connection) {
+    server = Get.arguments as BluetoothDevice;
+    BluetoothConnection.toAddress(server.address).then((_connection) {
       print('Connected to the device');
       connection = _connection;
 
@@ -58,12 +60,15 @@ class _ChatPage extends State<ChatPage> {
       });
 
       connection!.input!.listen(_onDataReceived).onDone(() {
+        //notify the provider the connection lost
+        provider.lostConnection = true;
         // Example: Detect which side closed the connection
         // There should be `isDisconnecting` flag to show are we are (locally)
         // in middle of disconnecting process, should be set before calling
         // `dispose`, `finish` or `close`, which all causes to disconnect.
         // If we except the disconnection, `onDone` should be fired as result.
         // If we didn't except this (no flag set), it means closing by remote.
+
         if (isDisconnecting) {
           print('Disconnecting locally!');
         } else {
@@ -96,6 +101,7 @@ class _ChatPage extends State<ChatPage> {
     provider = Provider.of<BluetoothProvider>(context);
     //HoldValues.connection = connection;
     provider.connection = connection;
+
     final List<Row> list = messages.map((_message) {
       return Row(
         children: <Widget>[
@@ -120,7 +126,7 @@ class _ChatPage extends State<ChatPage> {
       );
     }).toList();
 
-    final serverName = widget.server.name ?? "Unknown";
+    final serverName = server.name ?? "Unknown";
     return Scaffold(
       appBar: AppBar(
           title: (isConnecting
@@ -220,7 +226,7 @@ class _ChatPage extends State<ChatPage> {
           ),
         );
         _messageBuffer = dataString.substring(index);
-        provider.setValue(messages.last.text.trim());
+        provider.setMessageReceived(messages.last.text.trim());
       });
     } else {
       _messageBuffer = (backspacesCounter > 0
