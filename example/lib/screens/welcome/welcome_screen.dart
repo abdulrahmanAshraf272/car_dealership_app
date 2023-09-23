@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial_example/constans/constant_strings.dart';
+import 'package:flutter_bluetooth_serial_example/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class WelcomeScreen extends StatelessWidget {
   const WelcomeScreen({Key? key}) : super(key: key);
@@ -62,7 +64,7 @@ class WelcomeScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       MaterialButton(
-                        onPressed: () {},
+                        onPressed: () => Get.toNamed(RoutesClass.allCarsScreen),
                         color: Colors.white,
                         textColor: Colors.black,
                         child: Text('اضغط هنا'),

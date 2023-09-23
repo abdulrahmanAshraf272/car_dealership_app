@@ -1,13 +1,83 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
 import 'package:flutter_bluetooth_serial_example/constans/constant_strings.dart';
+import 'package:flutter_bluetooth_serial_example/hold_values.dart';
+import 'package:flutter_bluetooth_serial_example/routes.dart';
+import 'package:flutter_bluetooth_serial_example/screens/car_details/car_details_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
+import 'package:provider/provider.dart';
+import 'dart:convert';
+import 'dart:typed_data';
 
-class SmileFaceScreen extends StatelessWidget {
-  const SmileFaceScreen({Key? key}) : super(key: key);
+class SmileFaceScreen extends StatefulWidget {
+  SmileFaceScreen({Key? key}) : super(key: key);
+
+  @override
+  State<SmileFaceScreen> createState() => _SmileFaceScreenState();
+}
+
+class _SmileFaceScreenState extends State<SmileFaceScreen> {
+  late BluetoothProvider provider;
+
+  dynamic connection;
+
+  void sendArduinoToCar() {
+    _sendMessage(HoldValues.carSelected.toString());
+  }
+
+  void sendToArduinoToHome() {
+    _sendMessage('h');
+  }
+
+  void waitingForArduinoResponse(BuildContext context) async {
+    if (provider.getMessageReceived() == 'c') {
+      Get.toNamed(RoutesClass.carDetailsScreen);
+      // int x = 0;
+      // x = await Navigator.push(
+      //     context, MaterialPageRoute(builder: (context) => CarDetails()));
+      // if (x == 1) {
+      //   sendToArduinoToHome();
+      // }
+    } else if (provider.getMessageReceived() == 'h') {
+      Get.until((route) => route.settings.name == RoutesClass.welcomeScreen);
+    }
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    // Access the argument passed from the previous page
+    connection = Get.arguments;
+    sendArduinoToCar();
+  }
 
   @override
   Widget build(BuildContext context) {
     ScreenDimentions screenDimentions = ScreenDimentions(context: context);
+    provider = Provider.of<BluetoothProvider>(context);
+
+    Future<void>.delayed(Duration.zero, () async {
+      if (provider.getMessageReceived() == 'c') {
+        //Get.toNamed(RoutesClass.carDetailsScreen);
+        int x = 0;
+        x = await Navigator.push(
+            context, MaterialPageRoute(builder: (context) => CarDetails()));
+        if (x == 1) {
+          sendToArduinoToHome();
+          //print('the value of x = $x');
+        }
+        print('navigate to carDetails ');
+        provider.setMessageReceived('');
+      }
+
+      if (provider.getMessageReceived() == 'h') {
+        Get.until((route) => route.settings.name == RoutesClass.welcomeScreen);
+        provider.setMessageReceived('');
+      }
+    });
+
     return Scaffold(
       body: Center(
         child: Stack(
@@ -22,23 +92,33 @@ class SmileFaceScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Container(
-                        width: 45.w, // Adjust the size as needed
-                        height: 45.w, // Adjust the size as needed
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black, // Change the color as needed
+                      GestureDetector(
+                        onTap: () {
+                          //sendToArduinoToCar();
+                        },
+                        child: Container(
+                          width: 45.w, // Adjust the size as needed
+                          height: 45.w, // Adjust the size as needed
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black, // Change the color as needed
+                          ),
                         ),
                       ),
                       SizedBox(
                         width: 130.w,
                       ),
-                      Container(
-                        width: 45.w, // Adjust the size as needed
-                        height: 45.w, // Adjust the size as needed
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.black, // Change the color as needed
+                      GestureDetector(
+                        onTap: () {
+                          Get.toNamed(RoutesClass.carDetailsScreen);
+                        },
+                        child: Container(
+                          width: 45.w, // Adjust the size as needed
+                          height: 45.w, // Adjust the size as needed
+                          decoration: BoxDecoration(
+                            shape: BoxShape.circle,
+                            color: Colors.black, // Change the color as needed
+                          ),
                         ),
                       ),
                     ],
@@ -54,6 +134,17 @@ class SmileFaceScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  void _sendMessage(String text) async {
+    if (text.length > 0) {
+      try {
+        connection!.output.add(Uint8List.fromList(utf8.encode(text + "\r\n")));
+        await connection!.output.allSent;
+      } catch (e) {
+        print(e.toString());
+      }
+    }
   }
 }
 

@@ -18,7 +18,7 @@ class CarCard extends StatelessWidget {
 
     return GestureDetector(
       onTap: () {
-        HoldValues.carSelected = car;
+        HoldValues.carSelected = car.id;
         Get.toNamed(RoutesClass.confirmScreen);
       },
       child: Stack(

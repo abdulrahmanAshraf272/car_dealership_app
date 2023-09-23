@@ -6,7 +6,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
 import 'package:flutter_bluetooth_serial_example/connection_singleton.dart';
+import 'package:flutter_bluetooth_serial_example/constans/constant_strings.dart';
 import 'package:flutter_bluetooth_serial_example/display_value.dart';
+import 'package:flutter_bluetooth_serial_example/routes.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
@@ -96,94 +98,162 @@ class _ChatPage extends State<ChatPage> {
     super.dispose();
   }
 
+  Future<bool> _onWillPop() async {
+    if (isConnected) {
+      return (await showDialog(
+            context: context,
+            builder: (context) => new AlertDialog(
+              title: new Text(
+                "هل انت متأكد ؟",
+                style: TextStyle(fontFamily: fontFamilyPoppins),
+              ),
+              content: new Text(
+                'انك تريد قطع الإتصال',
+                style: TextStyle(fontFamily: fontFamilyPoppins),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(false),
+                  child: new Text(
+                    'لا',
+                    style: TextStyle(fontFamily: fontFamilyPoppins),
+                  ),
+                ),
+                TextButton(
+                  onPressed: () => Navigator.of(context).pop(true),
+                  child: new Text(
+                    'نعم',
+                    style: TextStyle(fontFamily: fontFamilyPoppins),
+                  ),
+                ),
+              ],
+            ),
+          )) ??
+          false;
+    } else {
+      Navigator.of(context).pop(true);
+      return true;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     provider = Provider.of<BluetoothProvider>(context);
     //HoldValues.connection = connection;
     provider.connection = connection;
 
-    final List<Row> list = messages.map((_message) {
-      return Row(
-        children: <Widget>[
-          Container(
-            child: Text(
-                (text) {
-                  return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
-                }(_message.text.trim()),
-                style: TextStyle(color: Colors.white)),
-            padding: EdgeInsets.all(12.0),
-            margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
-            width: 222.0,
-            decoration: BoxDecoration(
-                color:
-                    _message.whom == clientID ? Colors.blueAccent : Colors.grey,
-                borderRadius: BorderRadius.circular(7.0)),
-          ),
-        ],
-        mainAxisAlignment: _message.whom == clientID
-            ? MainAxisAlignment.end
-            : MainAxisAlignment.start,
-      );
-    }).toList();
-
-    final serverName = server.name ?? "Unknown";
-    return Scaffold(
-      appBar: AppBar(
-          title: (isConnecting
-              ? Text('Connecting chat to ' + serverName + '...')
-              : isConnected
-                  ? Text('Live chat with ' + serverName)
-                  : Text('Chat log with ' + serverName))),
-      body: SafeArea(
-        child: Column(
-          children: <Widget>[
-            Flexible(
-              child: ListView(
-                  padding: const EdgeInsets.all(12.0),
-                  controller: listScrollController,
-                  children: list),
-            ),
-            Row(
-              children: <Widget>[
-                Flexible(
-                  child: Container(
-                    margin: const EdgeInsets.only(left: 16.0),
-                    child: TextField(
-                      style: const TextStyle(fontSize: 15.0),
-                      controller: textEditingController,
-                      decoration: InputDecoration.collapsed(
-                        hintText: isConnecting
-                            ? 'Wait until connected...'
-                            : isConnected
-                                ? 'Type your message...'
-                                : 'Chat got disconnected',
-                        hintStyle: const TextStyle(color: Colors.grey),
-                      ),
-                      enabled: isConnected,
-                    ),
-                  ),
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: SafeArea(
+            child: SizedBox(
+          child: Center(
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  isConnected ? 'تم الإتصال بنجاح' : 'جاري اللإتصال ...',
+                  style: TextStyle(fontSize: 18),
                 ),
-                Container(
-                  margin: const EdgeInsets.all(8.0),
-                  child: IconButton(
-                      icon: const Icon(Icons.send),
-                      onPressed: isConnected
-                          ? () => _sendMessage(textEditingController.text)
-                          : null),
+                SizedBox(
+                  height: 20,
                 ),
+                isConnected
+                    ? MaterialButton(
+                        onPressed: () => Get.toNamed(RoutesClass.welcomeScreen),
+                        color: Colors.blue,
+                        textColor: Colors.white,
+                        child: Text('ابدأ'),
+                      )
+                    : SizedBox()
               ],
             ),
-            MaterialButton(
-              onPressed: () => Navigator.push(context,
-                  MaterialPageRoute(builder: (context) => DisplayValue())),
-              color: Colors.blue,
-              textColor: Colors.white,
-              child: Text('i hope it work'),
-            )
-          ],
-        ),
+          ),
+        )),
       ),
     );
+
+    // final List<Row> list = messages.map((_message) {
+    //   return Row(
+    //     children: <Widget>[
+    //       Container(
+    //         child: Text(
+    //             (text) {
+    //               return text == '/shrug' ? '¯\\_(ツ)_/¯' : text;
+    //             }(_message.text.trim()),
+    //             style: TextStyle(color: Colors.white)),
+    //         padding: EdgeInsets.all(12.0),
+    //         margin: EdgeInsets.only(bottom: 8.0, left: 8.0, right: 8.0),
+    //         width: 222.0,
+    //         decoration: BoxDecoration(
+    //             color:
+    //                 _message.whom == clientID ? Colors.blueAccent : Colors.grey,
+    //             borderRadius: BorderRadius.circular(7.0)),
+    //       ),
+    //     ],
+    //     mainAxisAlignment: _message.whom == clientID
+    //         ? MainAxisAlignment.end
+    //         : MainAxisAlignment.start,
+    //   );
+    // }).toList();
+
+    // final serverName = server.name ?? "Unknown";
+    // return Scaffold(
+    //   appBar: AppBar(
+    //       title: (isConnecting
+    //           ? Text('Connecting chat to ' + serverName + '...')
+    //           : isConnected
+    //               ? Text('Live chat with ' + serverName)
+    //               : Text('Chat log with ' + serverName))),
+    //   body: SafeArea(
+    //     child: Column(
+    //       children: <Widget>[
+    //         Flexible(
+    //           child: ListView(
+    //               padding: const EdgeInsets.all(12.0),
+    //               controller: listScrollController,
+    //               children: list),
+    //         ),
+    //         Row(
+    //           children: <Widget>[
+    //             Flexible(
+    //               child: Container(
+    //                 margin: const EdgeInsets.only(left: 16.0),
+    //                 child: TextField(
+    //                   style: const TextStyle(fontSize: 15.0),
+    //                   controller: textEditingController,
+    //                   decoration: InputDecoration.collapsed(
+    //                     hintText: isConnecting
+    //                         ? 'Wait until connected...'
+    //                         : isConnected
+    //                             ? 'Type your message...'
+    //                             : 'Chat got disconnected',
+    //                     hintStyle: const TextStyle(color: Colors.grey),
+    //                   ),
+    //                   enabled: isConnected,
+    //                 ),
+    //               ),
+    //             ),
+    //             Container(
+    //               margin: const EdgeInsets.all(8.0),
+    //               child: IconButton(
+    //                   icon: const Icon(Icons.send),
+    //                   onPressed: isConnected
+    //                       ? () => _sendMessage(textEditingController.text)
+    //                       : null),
+    //             ),
+    //           ],
+    //         ),
+    //         MaterialButton(
+    //           onPressed: () => Get.toNamed(RoutesClass.allCarsScreen),
+    //           color: Colors.blue,
+    //           textColor: Colors.white,
+    //           child: Text('i hope it work'),
+    //         )
+    //       ],
+    //     ),
+    //   ),
+    // );
   }
 
   void _onDataReceived(Uint8List data) {
@@ -228,6 +298,8 @@ class _ChatPage extends State<ChatPage> {
         _messageBuffer = dataString.substring(index);
         provider.setMessageReceived(messages.last.text.trim());
       });
+
+      print('the arduino message: ' + messages.last.text.trim());
     } else {
       _messageBuffer = (backspacesCounter > 0
           ? _messageBuffer.substring(

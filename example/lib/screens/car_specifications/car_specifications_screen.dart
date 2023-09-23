@@ -54,13 +54,10 @@ class _CarSpecificationState extends State<CarSpecification> {
         child: Column(
           children: [
             Header(title: title),
-            SizedBox(
-              height: screenDimentions.screenHeight * 0.01,
-            ),
             Padding(
               padding: EdgeInsets.symmetric(vertical: 0),
               child: Container(
-                height: screenDimentions.screenHeight * 0.67,
+                height: screenDimentions.screenHeight * 0.65,
                 width: screenDimentions.screenWidth,
                 child: PageView.builder(
                     onPageChanged: ((value) {

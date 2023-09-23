@@ -9,14 +9,14 @@ import 'package:flutter_bluetooth_serial_example/screens/welcome/welcome_screen.
 import 'package:get/get.dart';
 
 class RoutesClass {
-  static String home = "/";
-  static String allCarsScreen = '/all_cars_screen';
-  static String confirmScreen = '/confirm_screen';
-  static String carDetailsScreen = '/car_details_screen';
-  static String carSpecificationsScreen = '/car_specifications_screen';
-  static String welcomeScreen = '/welcome_scree';
-  static String smileFaceScreen = '/smile_face_screen';
-  static String chatPageForConnection = '/char_page_for_connection';
+  static const String home = "/";
+  static const String allCarsScreen = '/all_cars_screen';
+  static const String confirmScreen = '/confirm_screen';
+  static const String carDetailsScreen = '/car_details_screen';
+  static const String carSpecificationsScreen = '/car_specifications_screen';
+  static const String welcomeScreen = '/welcome_scree';
+  static const String smileFaceScreen = '/smile_face_screen';
+  static const String chatPageForConnection = '/char_page_for_connection';
 
   static String getHomeRoute() => home;
   static String getConfirmScreenRoute() => confirmScreen;
@@ -30,11 +30,17 @@ class RoutesClass {
   static List<GetPage> routes = [
     GetPage(name: home, page: () => MainPage()),
     GetPage(name: allCarsScreen, page: () => AllCarsScreen()),
-    GetPage(name: confirmScreen, page: () => const ConfirmScreen()),
+    GetPage(
+      name: confirmScreen,
+      page: () => ConfirmScreen(),
+    ),
     GetPage(name: carDetailsScreen, page: () => CarDetails()),
     GetPage(name: carSpecificationsScreen, page: () => CarSpecification()),
     GetPage(name: welcomeScreen, page: () => WelcomeScreen()),
-    GetPage(name: smileFaceScreen, page: () => SmileFaceScreen()),
+    GetPage(
+      name: smileFaceScreen,
+      page: () => SmileFaceScreen(),
+    ),
     GetPage(name: chatPageForConnection, page: () => ChatPage())
   ];
 }
