@@ -26,10 +26,6 @@ class _SmileFaceScreenState extends State<SmileFaceScreen> {
     _sendMessage(HoldValues.carSelected.toString());
   }
 
-  void sendToArduinoToHome() {
-    _sendMessage('h');
-  }
-
   void waitingForArduinoResponse(BuildContext context) async {
     if (provider.getMessageReceived() == 'c') {
       Get.toNamed(RoutesClass.carDetailsScreen);
@@ -60,15 +56,7 @@ class _SmileFaceScreenState extends State<SmileFaceScreen> {
 
     Future<void>.delayed(Duration.zero, () async {
       if (provider.getMessageReceived() == 'c') {
-        //Get.toNamed(RoutesClass.carDetailsScreen);
-        int x = 0;
-        x = await Navigator.push(
-            context, MaterialPageRoute(builder: (context) => CarDetails()));
-        if (x == 1) {
-          sendToArduinoToHome();
-          //print('the value of x = $x');
-        }
-        print('navigate to carDetails ');
+        Get.toNamed(RoutesClass.carDetailsScreen);
         provider.setMessageReceived('');
       }
 
@@ -78,59 +66,67 @@ class _SmileFaceScreenState extends State<SmileFaceScreen> {
       }
     });
 
-    return Scaffold(
-      body: Center(
-        child: Stack(
-          children: [
-            Positioned(
-              top: screenDimentions.screenHeight * 0.25,
-              right: 0,
-              left: 0,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.center,
-                    children: [
-                      GestureDetector(
-                        onTap: () {
-                          //sendToArduinoToCar();
-                        },
-                        child: Container(
-                          width: 45.w, // Adjust the size as needed
-                          height: 45.w, // Adjust the size as needed
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black, // Change the color as needed
+    //To prevent the use from pop from this screen, will damage the operation ,he have to wait.
+    Future<bool> _onWillPop() async {
+      return false;
+    }
+
+    return WillPopScope(
+      onWillPop: _onWillPop,
+      child: Scaffold(
+        body: Center(
+          child: Stack(
+            children: [
+              Positioned(
+                top: screenDimentions.screenHeight * 0.25,
+                right: 0,
+                left: 0,
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            //sendToArduinoToCar();
+                          },
+                          child: Container(
+                            width: 45.w, // Adjust the size as needed
+                            height: 45.w, // Adjust the size as needed
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black, // Change the color as needed
+                            ),
                           ),
                         ),
-                      ),
-                      SizedBox(
-                        width: 130.w,
-                      ),
-                      GestureDetector(
-                        onTap: () {
-                          Get.toNamed(RoutesClass.carDetailsScreen);
-                        },
-                        child: Container(
-                          width: 45.w, // Adjust the size as needed
-                          height: 45.w, // Adjust the size as needed
-                          decoration: BoxDecoration(
-                            shape: BoxShape.circle,
-                            color: Colors.black, // Change the color as needed
+                        SizedBox(
+                          width: 130.w,
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            Get.toNamed(RoutesClass.carDetailsScreen);
+                          },
+                          child: Container(
+                            width: 45.w, // Adjust the size as needed
+                            height: 45.w, // Adjust the size as needed
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                              color: Colors.black, // Change the color as needed
+                            ),
                           ),
                         ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(
-                    height: screenDimentions.screenHeight * 0.2,
-                  ),
-                  Container(child: UpsideDownTriangleWidget())
-                ],
+                      ],
+                    ),
+                    SizedBox(
+                      height: screenDimentions.screenHeight * 0.2,
+                    ),
+                    Container(child: UpsideDownTriangleWidget())
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
+          ),
         ),
       ),
     );
