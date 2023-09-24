@@ -5,7 +5,6 @@ import 'package:flutter_bluetooth_serial_example/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
-import 'package:quickalert/quickalert.dart';
 
 class WelcomeScreen extends StatelessWidget {
   WelcomeScreen({Key? key}) : super(key: key);
@@ -19,15 +18,38 @@ class WelcomeScreen extends StatelessWidget {
     provider = Provider.of<BluetoothProvider>(context);
 
     void showConnectionLostAlert() {
-      QuickAlert.show(
-          context: context,
-          type: QuickAlertType.warning,
-          title: "انقطع الإتصال بالروبوت",
-          text: "قم بإعادة الاتصال مرة اخرى",
-          confirmBtnText: "حسنا",
-          confirmBtnColor: Colors.black,
-          onConfirmBtnTap: () =>
-              Get.until((route) => route.settings.name == RoutesClass.home));
+      showDialog(
+        context: context,
+        builder: (context) => new AlertDialog(
+          title: new Text(
+            "انقطع الإتصال بالروبوت",
+            style: TextStyle(fontFamily: fontFamilyPoppins),
+          ),
+          content: new Text(
+            "قم بإعادة الاتصال مرة اخرى",
+            style: TextStyle(fontFamily: fontFamilyPoppins),
+          ),
+          actions: <Widget>[
+            TextButton(
+              onPressed: () =>
+                  Get.until((route) => route.settings.name == RoutesClass.home),
+              child: new Text(
+                'حسناً',
+                style: TextStyle(fontFamily: fontFamilyPoppins),
+              ),
+            ),
+          ],
+        ),
+      );
+      // QuickAlert.show(
+      //     context: context,
+      //     type: QuickAlertType.warning,
+      //     title: "انقطع الإتصال بالروبوت",
+      //     text: "قم بإعادة الاتصال مرة اخرى",
+      //     confirmBtnText: "حسنا",
+      //     confirmBtnColor: Colors.black,
+      //     onConfirmBtnTap: () =>
+      //         Get.until((route) => route.settings.name == RoutesClass.home));
     }
 
     // Function to check if the widget is currently visible on the screen

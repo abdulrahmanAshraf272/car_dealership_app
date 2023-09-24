@@ -47,9 +47,9 @@ class CarDetails extends StatelessWidget {
                   ),
                 ),
                 TextButton(
-                  onPressed: () {
-                    _sendToArduinoToHome();
+                  onPressed: () async {
                     Navigator.of(context).pop(true);
+                    _sendToArduinoToHome();
                   },
                   child: new Text(
                     'نعم',
@@ -69,37 +69,6 @@ class CarDetails extends StatelessWidget {
     double screenHeight = MediaQuery.of(context).size.height - safeAreaHeight;
     provider = Provider.of<BluetoothProvider>(context);
 
-    void showConnectionLostAlert() {
-      QuickAlert.show(
-          context: context,
-          type: QuickAlertType.warning,
-          title: "انقطع الإتصال بالروبوت",
-          text: "قم بإعادة الاتصال مرة اخرى",
-          confirmBtnText: "حسنا",
-          confirmBtnColor: Colors.black,
-          onConfirmBtnTap: () =>
-              Get.until((route) => route.settings.name == RoutesClass.home));
-    }
-
-    // Function to check if the widget is currently visible on the screen
-    bool isWidgetVisible(BuildContext context) {
-      final RenderBox renderBox = context.findRenderObject() as RenderBox;
-      final position = renderBox.localToGlobal(Offset.zero);
-      final screenSize = MediaQuery.of(context).size;
-
-      // Check if the widget is fully or partially visible on the screen
-      return position.dy >= 0 && position.dy <= screenSize.height;
-    }
-
-    Future<void>.delayed(Duration.zero, () async {
-      if (provider.connection?.isConnected == false) {
-        print('the connection is lost: carDetails page');
-
-        if (isWidgetVisible(context)) {
-          showConnectionLostAlert();
-        }
-      }
-    });
     return WillPopScope(
       onWillPop: _onWillPop,
       child: Scaffold(
@@ -114,7 +83,9 @@ class CarDetails extends StatelessWidget {
                     child: Padding(
                       padding: const EdgeInsets.only(left: 10),
                       child: IconButton(
-                          onPressed: () => _onWillPop(),
+                          onPressed: () async {
+                            _onWillPop();
+                          },
                           icon: const Icon(Icons.arrow_back)),
                     ),
                   )),
