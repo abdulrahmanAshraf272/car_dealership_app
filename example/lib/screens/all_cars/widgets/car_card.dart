@@ -4,6 +4,7 @@ import 'package:flutter_bluetooth_serial_example/hold_values.dart';
 import 'package:flutter_bluetooth_serial_example/models/car.dart';
 import 'package:flutter_bluetooth_serial_example/routes.dart';
 import 'package:flutter_bluetooth_serial_example/screens/all_cars/widgets/info_boxes.dart';
+import 'package:flutter_bluetooth_serial_example/screens/confirm_screen/confirm_screen.dart';
 
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -19,7 +20,13 @@ class CarCard extends StatelessWidget {
     return GestureDetector(
       onTap: () {
         HoldValues.carSelected = car.id;
-        Get.toNamed(RoutesClass.confirmScreen);
+        Get.to(
+          () => ConfirmScreen(),
+          // transition:
+          //     Transition.fadeIn, // You can specify the transition you want
+          duration:
+              const Duration(milliseconds: 650), // Set your desired duration
+        );
       },
       child: Stack(
         children: [
@@ -108,8 +115,11 @@ class CarCard extends StatelessWidget {
               left: 0,
               child: SizedBox(
                 height: screenWidth / 2 - screenWidth * 0.3,
-                child: Image.asset(
-                  car.imageWithoutBackground,
+                child: Hero(
+                  tag: 'car-image-${car.id}',
+                  child: Image.asset(
+                    car.imageWithoutBackground,
+                  ),
                 ),
               ))
         ],

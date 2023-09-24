@@ -134,9 +134,12 @@ class ConfirmScreen extends StatelessWidget {
                 )),
             Positioned(
                 top: screenDimentions.screenHeight * 0.19,
-                child: Image.asset(
-                  car.imageWithoutBackground,
-                  height: screenDimentions.screenHeight * 0.4,
+                child: Hero(
+                  tag: 'car-image-${car.id}',
+                  child: Image.asset(
+                    car.imageWithoutBackground,
+                    height: screenDimentions.screenHeight * 0.4,
+                  ),
                 ))
           ],
         ),
