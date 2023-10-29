@@ -1,4 +1,5 @@
 # Car dealership app
+tthe project is robot will work in car dealership to guide the client to the car and present the car’s features, i’ve build the app that will send and receive order the arduino of the robot.
 
 
 # Screenshots
