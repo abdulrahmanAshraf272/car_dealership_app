@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
+import 'package:flutter_bluetooth_serial_example/my_bindings.dart';
 import 'package:flutter_bluetooth_serial_example/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:provider/provider.dart';
 import 'package:get/get.dart';
 import 'package:flutter/services.dart';
 
@@ -21,15 +20,12 @@ class ExampleApplication extends StatelessWidget {
       minTextAdapt: true,
       splitScreenMode: true,
       builder: (BuildContext context, Widget? child) {
-        return MultiProvider(
-            providers: [
-              ChangeNotifierProvider(create: (_) => BluetoothProvider()),
-            ],
-            child: GetMaterialApp(
-              debugShowCheckedModeBanner: false,
-              initialRoute: RoutesClass.getHomeRoute(),
-              getPages: RoutesClass.routes,
-            ));
+        return GetMaterialApp(
+          debugShowCheckedModeBanner: false,
+          initialRoute: RoutesClass.getHomeRoute(),
+          initialBinding: MyBindings(),
+          getPages: RoutesClass.routes,
+        );
       },
     );
   }

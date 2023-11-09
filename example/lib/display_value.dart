@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
-import 'package:provider/provider.dart';
+import 'package:flutter_bluetooth_serial_example/controllers/bluetooth_controller.dart';
+import 'package:get/get.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
 class DisplayValue extends StatelessWidget {
-  late BluetoothProvider provider;
+  late BluetoothController bluetoothController;
   DisplayValue({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
-    provider = Provider.of<BluetoothProvider>(context);
+    bluetoothController = Get.find();
 
     return Scaffold(
         body: SafeArea(
@@ -35,11 +35,13 @@ class DisplayValue extends StatelessWidget {
               color: Colors.blue,
               child: Text('off'),
             ),
-            Text('${provider.getMessageReceived()}'),
+            Text('${bluetoothController.getMessageReceived()}'),
             SizedBox(
               height: 20,
             ),
-            provider.lostConnection ? Text('Lost connection') : SizedBox()
+            bluetoothController.lostConnection
+                ? Text('Lost connection')
+                : SizedBox()
           ],
         ),
       ),
@@ -49,9 +51,9 @@ class DisplayValue extends StatelessWidget {
   void _sendMessage(String text) async {
     if (text.length > 0) {
       try {
-        provider.connection!.output
+        bluetoothController.connection!.output
             .add(Uint8List.fromList(utf8.encode(text + "\r\n")));
-        await provider.connection!.output.allSent;
+        await bluetoothController.connection!.output.allSent;
       } catch (e) {
         print(e.toString());
       }

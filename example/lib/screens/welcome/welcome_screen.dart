@@ -1,21 +1,20 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
 import 'package:flutter_bluetooth_serial_example/constans/constant_strings.dart';
+import 'package:flutter_bluetooth_serial_example/controllers/bluetooth_controller.dart';
 import 'package:flutter_bluetooth_serial_example/routes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 class WelcomeScreen extends StatelessWidget {
   WelcomeScreen({Key? key}) : super(key: key);
 
-  late BluetoothProvider provider;
+  late BluetoothController bluetoothController;
 
   @override
   Widget build(BuildContext context) {
     ScreenDimentions screenDimentions = ScreenDimentions(context: context);
 
-    provider = Provider.of<BluetoothProvider>(context);
+    bluetoothController = Get.find();
 
     void showConnectionLostAlert() {
       showDialog(
@@ -63,7 +62,7 @@ class WelcomeScreen extends StatelessWidget {
     }
 
     Future<void>.delayed(Duration.zero, () async {
-      if (provider.connection?.isConnected == false) {
+      if (bluetoothController.connection?.isConnected == false) {
         print('the connection is lost: Welcome page');
         if (isWidgetVisible(context)) {
           showConnectionLostAlert();

@@ -1,12 +1,11 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
 import 'package:flutter_bluetooth_serial_example/constans/constant_strings.dart';
+import 'package:flutter_bluetooth_serial_example/controllers/bluetooth_controller.dart';
 import 'package:flutter_bluetooth_serial_example/hold_values.dart';
 import 'package:flutter_bluetooth_serial_example/routes.dart';
 import 'package:flutter_bluetooth_serial_example/screens/car_details/car_details_screen.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 
@@ -18,7 +17,8 @@ class SmileFaceScreen extends StatefulWidget {
 }
 
 class _SmileFaceScreenState extends State<SmileFaceScreen> {
-  late BluetoothProvider provider;
+  //late BluetoothProvider provider;
+  late BluetoothController bluetoothController;
 
   dynamic connection;
 
@@ -26,19 +26,13 @@ class _SmileFaceScreenState extends State<SmileFaceScreen> {
     _sendMessage(HoldValues.carSelected.toString());
   }
 
-  void waitingForArduinoResponse(BuildContext context) async {
-    if (provider.getMessageReceived() == 'c') {
-      Get.toNamed(RoutesClass.carDetailsScreen);
-      // int x = 0;
-      // x = await Navigator.push(
-      //     context, MaterialPageRoute(builder: (context) => CarDetails()));
-      // if (x == 1) {
-      //   sendToArduinoToHome();
-      // }
-    } else if (provider.getMessageReceived() == 'h') {
-      Get.until((route) => route.settings.name == RoutesClass.welcomeScreen);
-    }
-  }
+  // void waitingForArduinoResponse(BuildContext context) async {
+  //   if (bluetoothController.getMessageReceived() == 'c') {
+  //     Get.toNamed(RoutesClass.carDetailsScreen);
+  //   } else if (bluetoothController.getMessageReceived() == 'h') {
+  //     Get.until((route) => route.settings.name == RoutesClass.welcomeScreen);
+  //   }
+  // }
 
   @override
   void initState() {
@@ -52,17 +46,17 @@ class _SmileFaceScreenState extends State<SmileFaceScreen> {
   @override
   Widget build(BuildContext context) {
     ScreenDimentions screenDimentions = ScreenDimentions(context: context);
-    provider = Provider.of<BluetoothProvider>(context);
+    bluetoothController = Get.find();
 
     Future<void>.delayed(Duration.zero, () async {
-      if (provider.getMessageReceived() == 'c') {
+      if (bluetoothController.getMessageReceived() == 'c') {
         Get.toNamed(RoutesClass.carDetailsScreen);
-        provider.setMessageReceived('');
+        bluetoothController.setMessageReceived('');
       }
 
-      if (provider.getMessageReceived() == 'h') {
+      if (bluetoothController.getMessageReceived() == 'h') {
         Get.until((route) => route.settings.name == RoutesClass.welcomeScreen);
-        provider.setMessageReceived('');
+        bluetoothController.setMessageReceived('');
       }
     });
 

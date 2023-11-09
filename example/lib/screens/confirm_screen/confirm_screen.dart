@@ -1,10 +1,10 @@
 import 'package:auto_size_text/auto_size_text.dart';
 
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
 import 'package:flutter_bluetooth_serial_example/cars_data/cars_list.dart';
 import 'package:flutter_bluetooth_serial_example/constans/constant_strings.dart';
 import 'package:flutter_bluetooth_serial_example/constans/my_colors.dart';
+import 'package:flutter_bluetooth_serial_example/controllers/bluetooth_controller.dart';
 import 'package:flutter_bluetooth_serial_example/hold_values.dart';
 import 'package:flutter_bluetooth_serial_example/models/car.dart';
 import 'package:flutter_bluetooth_serial_example/routes.dart';
@@ -12,14 +12,12 @@ import 'package:flutter_bluetooth_serial_example/screens/confirm_screen/widgets/
 import 'package:flutter_bluetooth_serial_example/screens/all_cars/widgets/info_boxes.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:quickalert/quickalert.dart';
 
 class ConfirmScreen extends StatelessWidget {
-  late BluetoothProvider provider;
+  late BluetoothController bluetoothController;
   BluetoothConnection? connection;
   ConfirmScreen({
     Key? key,
@@ -27,8 +25,8 @@ class ConfirmScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    provider = Provider.of<BluetoothProvider>(context);
-    connection = provider.connection;
+    bluetoothController = Get.find();
+    connection = bluetoothController.connection;
     final Car car = cars[HoldValues.carSelected];
     double screenHeight = MediaQuery.of(context).size.height;
     ScreenDimentions screenDimentions = ScreenDimentions(context: context);
@@ -126,7 +124,6 @@ class ConfirmScreen extends StatelessWidget {
                             onPress: () {
                               Get.toNamed(RoutesClass.smileFaceScreen,
                                   arguments: connection);
-                              //_sendMessage(HoldValues.carSelected.toString());
                             },
                           ),
                         ],
@@ -152,9 +149,9 @@ class ConfirmScreen extends StatelessWidget {
   void _sendMessage(String text) async {
     if (text.length > 0) {
       try {
-        provider.connection!.output
+        bluetoothController.connection!.output
             .add(Uint8List.fromList(utf8.encode(text + "\r\n")));
-        await provider.connection!.output.allSent;
+        await bluetoothController.connection!.output.allSent;
       } catch (e) {
         print(e.toString());
       }

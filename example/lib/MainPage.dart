@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
 import 'package:flutter_bluetooth_serial_example/display_value.dart';
 import 'package:flutter_bluetooth_serial_example/routes.dart';
+import 'package:flutter_bluetooth_serial_example/screens/all_cars/all_cars_screen.dart';
 import 'package:get/get.dart';
 import 'package:scoped_model/scoped_model.dart';
 

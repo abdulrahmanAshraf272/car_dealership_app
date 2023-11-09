@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
 import 'package:flutter_bluetooth_serial_example/cars_data/cars_list.dart';
 import 'package:flutter_bluetooth_serial_example/constans/constant_strings.dart';
+import 'package:flutter_bluetooth_serial_example/controllers/bluetooth_controller.dart';
 import 'package:flutter_bluetooth_serial_example/hold_values.dart';
 import 'package:flutter_bluetooth_serial_example/models/car.dart';
 import 'package:flutter_bluetooth_serial_example/routes.dart';
@@ -9,15 +9,13 @@ import 'package:flutter_bluetooth_serial_example/screens/car_details/widgets/car
 import 'package:flutter_bluetooth_serial_example/screens/car_details/widgets/image_with_description.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 import 'dart:convert';
 import 'dart:typed_data';
-import 'package:quickalert/quickalert.dart';
 
 class CarDetails extends StatelessWidget {
   CarDetails({Key? key}) : super(key: key);
 
-  late BluetoothProvider provider;
+  late BluetoothController bluetoothController;
 
   @override
   Widget build(BuildContext context) {
@@ -67,7 +65,7 @@ class CarDetails extends StatelessWidget {
     // Get the app bar height (if it exists)
     double safeAreaHeight = MediaQuery.of(context).padding.top;
     double screenHeight = MediaQuery.of(context).size.height - safeAreaHeight;
-    provider = Provider.of<BluetoothProvider>(context);
+    bluetoothController = Get.find();
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -129,9 +127,9 @@ class CarDetails extends StatelessWidget {
   void _sendMessage(String text) async {
     if (text.length > 0) {
       try {
-        provider.connection!.output
+        bluetoothController.connection!.output
             .add(Uint8List.fromList(utf8.encode(text + "\r\n")));
-        await provider.connection!.output.allSent;
+        await bluetoothController.connection!.output.allSent;
       } catch (e) {
         print(e.toString());
       }

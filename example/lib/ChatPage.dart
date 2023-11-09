@@ -4,11 +4,10 @@ import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_bluetooth_serial/flutter_bluetooth_serial.dart';
-import 'package:flutter_bluetooth_serial_example/bluetooth_provider.dart';
 import 'package:flutter_bluetooth_serial_example/constans/constant_strings.dart';
+import 'package:flutter_bluetooth_serial_example/controllers/bluetooth_controller.dart';
 import 'package:flutter_bluetooth_serial_example/routes.dart';
 import 'package:get/get.dart';
-import 'package:provider/provider.dart';
 
 class ChatPage extends StatefulWidget {
   //final BluetoothDevice server;
@@ -44,7 +43,8 @@ class _ChatPage extends State<ChatPage> {
   bool isDisconnecting = false;
 
   //// === /////
-  late BluetoothProvider provider;
+  //late BluetoothProvider provider;
+  late BluetoothController bluetoothController;
 
   @override
   void initState() {
@@ -60,14 +60,7 @@ class _ChatPage extends State<ChatPage> {
       });
 
       connection!.input!.listen(_onDataReceived).onDone(() {
-        //notify the provider the connection lost
-        provider.lostConnection = true;
-        // Example: Detect which side closed the connection
-        // There should be `isDisconnecting` flag to show are we are (locally)
-        // in middle of disconnecting process, should be set before calling
-        // `dispose`, `finish` or `close`, which all causes to disconnect.
-        // If we except the disconnection, `onDone` should be fired as result.
-        // If we didn't except this (no flag set), it means closing by remote.
+        bluetoothController.lostConnection = true;
 
         if (isDisconnecting) {
           print('Disconnecting locally!');
@@ -136,9 +129,8 @@ class _ChatPage extends State<ChatPage> {
 
   @override
   Widget build(BuildContext context) {
-    provider = Provider.of<BluetoothProvider>(context);
-    //HoldValues.connection = connection;
-    provider.connection = connection;
+    bluetoothController = Get.find();
+    bluetoothController.connection = connection;
 
     return WillPopScope(
       onWillPop: _onWillPop,
@@ -294,7 +286,8 @@ class _ChatPage extends State<ChatPage> {
           ),
         );
         _messageBuffer = dataString.substring(index);
-        provider.setMessageReceived(messages.last.text.trim());
+
+        bluetoothController.setMessageReceived(messages.last.text.trim());
       });
 
       print('the arduino message: ' + messages.last.text.trim());
