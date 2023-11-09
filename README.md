@@ -18,6 +18,5 @@ tthe project is robot will work in car dealership to guide the client to the car
 
 # Dependencies
 - flutter_bluetooth_serial
-- provider
 - get
 - flutter_screenutil
